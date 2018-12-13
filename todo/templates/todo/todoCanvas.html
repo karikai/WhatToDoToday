@@ -1,0 +1,120 @@
+{% extends 'C:\Users\Karia\Desktop\WhatToDoToday\templates\base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="todoCanvas">
+        <h3 id="date"></h3>
+
+        <div id="myProgress">
+            <div id="myBar"></div>
+        </div>
+
+        <div id="TaskContainer">
+        </div>
+
+    </div>
+
+    <div class="todoCanvas">
+        <p id="newTaskLabel">Title: </p> <br>
+        <input id="newTaskTitle" type="text"> <br>
+        <a id="newTaskButton" class="btn btn-primary">Add Task</a>
+
+    </div>
+
+    <div class="todoCanvas">
+        <h4>Total Task:<span id="total" class="valueHolder"></span></h4>
+        <h4>Completed Task:<span id="completed" class="valueHolder"></span></h4>
+        <h4>Remaining Task:<span id="remaining" class="valueHolder"></span></h4>
+
+    </div>
+
+    <script>
+
+
+        // This handles the date
+
+        var d = new Date();
+        var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+        document.getElementById("date").innerHTML = months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear() + " - " + days[d.getDay()];
+
+        // Stores task inside an array, and generates corresponding HTML
+
+        var taskArray = [];
+        var starterTask = {title: "First Task"};
+        taskArray.push(starterTask);
+
+        var i = 0;
+
+        function updateTask() {
+                for (i; i < taskArray.length; i++) {
+                    var task = document.createElement("li");
+                    task.setAttribute("onclick", "complete(this)");
+                    var t = document.createTextNode(taskArray[i].title);
+                    task.appendChild(t);
+                    document.getElementById("TaskContainer").appendChild(task);
+                }
+                updateProgress();
+        }
+
+        updateTask();
+
+        // Onclick listener that "completes" task
+
+        var completedTask = 0;
+
+        function complete(eleme) {
+            if (eleme.style.backgroundColor != "green") {
+                console.log(eleme.style.backgroundColor);
+                eleme.style.backgroundColor = "green";
+                completedTask++;
+                updateProgress();
+            }
+        }
+
+        // OnClick listener that adds task to the array
+
+        document.getElementById("newTaskButton").onclick = function () {
+            if (document.getElementById("newTaskTitle").value != "") {
+                var newTask = {title: document.getElementById("newTaskTitle").value};
+                taskArray.push(newTask);
+                console.log(newTask.title)
+            }
+            updateTask();
+            document.getElementById("newTaskTitle").value = "";
+        };
+
+        // Tracks progress for progress bar
+
+        function check() {
+            var count = 0;
+            for (var t = 0; t < taskArray; t++) {
+                if (taskArray[t].completed === true) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        var currentTask = taskArray.length;
+
+        function updateProgress() {
+            currentTask = taskArray.length;
+            var progress = (completedTask / currentTask) * 100;
+            console.log(completedTask);
+            var widthS = progress.toString() + "%";
+            console.log(widthS);
+            document.getElementById("myBar").style.width = widthS;
+            document.getElementById("total").innerText = taskArray.length;
+            document.getElementById("completed").innerText = completedTask;
+            document.getElementById("remaining").innerText = taskArray.length - completedTask;
+        }
+
+
+
+
+
+    </script>
+
+{% endblock %}
